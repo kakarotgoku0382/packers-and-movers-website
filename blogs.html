@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Blogs - Packers & Movers</title>
+  <link rel="stylesheet" href="index.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="navbar-container"></div>
+
+  <section class="blog-header">
+    <h1>Moving Tips & Stories</h1>
+    <p>Our best blogs to help you through every stage of your relocation.</p>
+  </section>
+
+  <main class="blogs-section">
+    <!-- Blog Posts -->
+    <div class="blog-post">
+      <h2>Smart Packing Techniques</h2>
+      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="Packing">
+      <p>Packing your items in an efficient way reduces damage and stress. Group similar items, label your boxes, and use padding wisely. Always pack heavy items in smaller boxes!</p>
+      <div class="blog-meta">Posted by Riya Sharma | July 10, 2025</div>
+    </div>
+
+    <div class="blog-post">
+      <h2>How We Handle Fragile Items</h2>
+      <img src="frazile.jpeg" alt="Fragile items">
+      <p>Delicate items like glassware and antiques are wrapped in bubble wrap, placed in padded crates, and secured separately. We take special care for each fragile item.</p>
+      <div class="blog-meta">Posted by Rajat Das | July 17, 2025</div>
+    </div>
+
+    <div class="blog-post">
+      <h2>Relocating Your Office Smoothly</h2>
+      <img src="officeRelocation.jpeg" alt="Office relocation">
+      <p>Office moving includes coordination with team leads, equipment tagging, and safe cabling. Our crew follows a checklist to ensure nothing is missed during the shift.</p>
+      <div class="blog-meta">Posted by Anita Paul | July 21, 2025</div>
+    </div>
+
+    <div class="blog-post">
+      <h2>Long Distance Move? Here's What to Do</h2>
+      <img src="longDistMoveBlog.jpeg" alt="Truck on road">
+      <p>Start early, plan your budget, and trust a reliable moving company. Keep a moving folder and pack a survival kit for the journey. We'll take care of the rest.</p>
+      <div class="blog-meta">Posted by Sunil Mehra | July 24, 2025</div>
+    </div>
+
+    <div class="blog-post">
+      <h2>Why Choose Professional Movers</h2>
+      <img src="professionalDelhivery.jpeg" alt="Professional movers">
+      <p>Hiring experts ensures safety, speed, and insurance. We provide trained staff and dedicated managers to make your move effortless and organized.</p>
+      <div class="blog-meta">Posted by Meenal Kaur | July 28, 2025</div>
+    </div>
+
+    <!-- Add Blog Form -->
+    <section class="blog-submit-form">
+      <h2>Submit Your Blog</h2>
+      <form action="#" method="post" enctype="multipart/form-data">
+        <label for="blog-title">Blog Title</label>
+        <input type="text" id="blog-title" name="blog-title" required />
+
+        <label for="blog-content">Blog Content</label>
+        <textarea id="blog-content" name="blog-content" rows="6" required></textarea>
+
+        <label for="blog-image">Upload Image</label>
+        <input type="file" id="blog-image" name="blog-image" accept="image/*" required />
+
+        <button type="submit">Submit for Review</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 PackMove. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function toggleLoginMenu() {
+      const menu = document.getElementById('loginMenu');
+      menu.classList.toggle('show');
+    }
+
+    window.addEventListener('click', function (e) {
+      const loginBtn = document.querySelector('.login-btn');
+      const loginMenu = document.getElementById('loginMenu');
+      if (!loginBtn.contains(e.target) && !loginMenu.contains(e.target)) {
+        loginMenu.classList.remove('show');
+      }
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

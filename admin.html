@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Elephant Movers</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="admin-header">
+        <div class="admin-header-content">
+            <h1>Admin Panel</h1>
+        </div>
+    </header>
+
+    <main class="admin-main wide-layout">
+        <!-- Quick Stats Section -->
+        <div class="admin-quick-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="blog-count">0</div>
+                <div class="stat-label">Total Blogs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="enquiry-count">0</div>
+                <div class="stat-label">Total Enquiries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="review-count">0</div>
+                <div class="stat-label">Total Reviews</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Manage Blog -->
+        <section class="admin-section">
+            <h2>Manage Blog</h2>
+            <form id="add-blog-form">
+                <input type="text" id="title" placeholder="Post Title" required>
+                <textarea id="content" placeholder="Post Content" required></textarea>
+                <button type="submit">Add New Post</button>
+            </form>
+            <hr style="margin: 20px 0;">
+            <h3>Existing Blog Posts</h3>
+            <!-- This container will be filled with a list of blogs -->
+            <div id="blogs-list"></div>
+        </section>
+
+        <!-- Section 2: Customer Enquiries -->
+        <section class="admin-section" id="customer-enquiries">
+            <h2>Customer Enquiries</h2>
+            <div id="enquiries-list">
+                <!-- Dynamic list of enquiries will be populated here -->
+            </div>
+        </section>
+
+        <!-- Section 3: Customer Reviews -->
+        <section class="admin-section" id="customer-reviews">
+            <h2>Customer Reviews</h2>
+            <div id="reviews-list">
+                <!-- Dynamic list of reviews will be populated here -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="admin-footer">
+        <p>&copy; 2025 Elephant Packers & Movers. Admin Panel</p>
+    </footer>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

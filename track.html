@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Shipment - Elephant Movers</title>
+    <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">Elephant Movers</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about-us.html">About Us</a>
+            <a href="services.html">Services</a>
+            <a href="blog.html">Blog</a>
+            <a href="reviews.html">Reviews</a>
+            <a href="contact.html">Contact</a>
+            <a href="track.html" class="track-btn">Track</a>
+        </div>
+    </nav>
+
+    <main class="section">
+        <section class="admin-section" style="width: 100%; max-width: 800px;">
+            <h2>Track Your Shipment</h2>
+            <p>Enter your Tracking ID below to see the current status of your move.</p>
+            
+            <!-- Tracking Form -->
+            <form id="tracking-form">
+                <input type="text" id="trackingIdInput" placeholder="Enter Your Tracking ID" required>
+                <button type="submit">Track Now</button>
+            </form>
+
+            <!-- Tracking Results Container -->
+            <div id="tracking-results-container" style="margin-top: 2rem; text-align: left;">
+                <!-- Tracking status will be displayed here by app.js -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        &copy; 2025 Elephant Packers & Movers. All rights reserved.
+    </footer>
+
+    <!-- Link to your JavaScript files -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
