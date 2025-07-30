@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Elephant Movers</title>
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="/css/index.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -24,11 +24,16 @@
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="enquiry-count">0</div>
-                <div class="stat-label">Total Enquiries</div>
+                <div class="stat-label">Quote Enquiries</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value" id="review-count">0</div>
                 <div class="stat-label">Total Reviews</div>
+            </div>
+            <!-- NEW: Stat card for contact messages -->
+            <div class="stat-card">
+                <div class="stat-value" id="contact-count">0</div>
+                <div class="stat-label">Contact Messages</div>
             </div>
         </div>
 
@@ -42,24 +47,25 @@
             </form>
             <hr style="margin: 20px 0;">
             <h3>Existing Blog Posts</h3>
-            <!-- This container will be filled with a list of blogs -->
             <div id="blogs-list"></div>
         </section>
 
-        <!-- Section 2: Customer Enquiries -->
+        <!-- Section 2: Customer Quote Enquiries -->
         <section class="admin-section" id="customer-enquiries">
-            <h2>Customer Enquiries</h2>
-            <div id="enquiries-list">
-                <!-- Dynamic list of enquiries will be populated here -->
-            </div>
+            <h2>Customer Quote Enquiries</h2>
+            <div id="enquiries-list"></div>
+        </section>
+        
+        <!-- NEW: Section for Contact Us Messages -->
+        <section class="admin-section" id="contact-messages">
+            <h2>Contact Us Messages</h2>
+            <div id="contact-list-container"></div>
         </section>
 
         <!-- Section 3: Customer Reviews -->
         <section class="admin-section" id="customer-reviews">
             <h2>Customer Reviews</h2>
-            <div id="reviews-list">
-                <!-- Dynamic list of reviews will be populated here -->
-            </div>
+            <div id="reviews-list"></div>
         </section>
     </main>
 
@@ -67,6 +73,10 @@
         <p>&copy; 2025 Elephant Packers & Movers. Admin Panel</p>
     </footer>
 
-    <script type="module" src="app.js"></script>
+    <script type="module" src="/js/app.js"></script>
+
+<!-- Toast Notification Container -->
+<div id="toast-notification" class="toast-notification"></div>
+
 </body>
 </html>

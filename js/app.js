@@ -4,7 +4,7 @@
 
 // Import functions from the Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Import your secret keys from the other file
 import { firebaseConfig } from './firebase-config.js';
@@ -15,58 +15,62 @@ const db = getFirestore(app);
 
 // --- Main Router: Runs the correct code based on the current page ---
 document.addEventListener('DOMContentLoaded', () => {
-    const page = window.location.pathname.split("/").pop();
+    const page = window.location.pathname.split("/").pop() || "index.html";
 
-    if (page === 'contact.html' || page === 'index.html') handleContactPage();
+    if (page === 'index.html' || page === 'contact.html') handleContactPage();
+    if (page === 'index.html') handleIndexPage();
     if (page === 'services.html') handleServiceEnquiryPage();
     if (page === 'reviews.html') handleReviewsPage();
-    if (page === 'blog.html') handleBlogPage();
+    if (page === 'blog.html' || page === 'blogs.html') handleBlogPage();
     if (page === 'admin.html') handleAdminPage();
     if (page === 'track.html') handleTrackingPage();
 });
 
 // --- Helper function to generate a unique tracking ID ---
 function generateTrackingId() {
-    const prefix = "EM"; // Elephant Movers
+    const prefix = "EM";
     const randomNumber = Math.floor(100000 + Math.random() * 900000);
     return `${prefix}${randomNumber}`;
 }
 
 // =================================================================
-//  Enquiry Submission Logic (Handles all forms)
+//  Enquiry & Form Submission Logic
 // =================================================================
+// FOR SERVICE QUOTES (with Tracking ID)
 async function submitEnquiry(enquiryData, formElement) {
     const trackingId = generateTrackingId();
-    const dataToSave = {
-        ...enquiryData,
-        trackingId: trackingId,
-        status: "Booking Confirmed", // Initial status
-        timestamp: new Date()
-    };
-
+    const dataToSave = { ...enquiryData, trackingId: trackingId, status: "Booking Confirmed", timestamp: new Date() };
     try {
         await addDoc(collection(db, "enquiries"), dataToSave);
-        alert(`Success! Your enquiry has been sent.\nYour Tracking ID is: ${trackingId}\nPlease save it for future reference.`);
-        formElement.reset(); // Reset the form that was submitted
+        showToast(`Success! Your quote request has been sent.\nYour Tracking ID is: ${trackingId}`, 'success');
+        formElement.reset();
     } catch (error) {
         console.error("Error sending enquiry: ", error);
-        alert('Error: Could not send enquiry.');
+        showToast('Error: Could not send enquiry.', 'error');
     }
 }
 
+// FOR GENERAL CONTACT MESSAGES (no Tracking ID)
 function handleContactPage() {
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const enquiryData = {
-                name: contactForm.name.value,
-                email: contactForm.email.value,
-                phone: contactForm.phone.value,
-                message: contactForm.message.value,
-                type: "Simple Enquiry"
-            };
-            submitEnquiry(enquiryData, contactForm);
+            try {
+                // SAVES TO THE NEW 'contact-list' COLLECTION
+                await addDoc(collection(db, "contact-list"), {
+                    name: contactForm.name.value,
+                    email: contactForm.email.value,
+                    phone: contactForm.phone.value,
+                    message: contactForm.message.value,
+                    timestamp: new Date()
+                });
+                showToast('Thank you for your message! We will get back to you shortly.', 'success');
+                contactForm.reset();
+            } catch (error) {
+                console.error("Error sending contact message: ", error);
+                showToast('Error: Could not send message.', 'error');
+            }
         });
     }
 }
@@ -90,10 +94,6 @@ function handleServiceEnquiryPage() {
         });
     }
 }
-
-// =================================================================
-//  Tracking Page Logic (track.html)
-// =================================================================
 function handleTrackingPage() {
     const trackingForm = document.getElementById('tracking-form');
     const resultsContainer = document.getElementById('tracking-results-container');
@@ -125,10 +125,6 @@ function handleTrackingPage() {
         });
     }
 }
-
-// =================================================================
-//  Reviews Page Logic (reviews.html)
-// =================================================================
 function handleReviewsPage() {
     const reviewForm = document.getElementById('review-form');
     const reviewsContainer = document.getElementById('reviews-container');
@@ -160,11 +156,11 @@ function handleReviewsPage() {
                     review: document.getElementById('reviewText').value,
                     timestamp: new Date()
                 });
-                alert('Thank you for your review!');
+                showToast('Thank you for your review!', 'success');
                 reviewForm.reset();
                 displayReviews();
             } catch (error) {
-                alert('Error submitting review.');
+                showToast('Error submitting review.', 'error');
             }
         });
     }
@@ -173,108 +169,117 @@ function handleReviewsPage() {
 }
 
 // =================================================================
-//  Blog Page Logic (blog.html)
+//  Blog Page Logic
 // =================================================================
 async function handleBlogPage() {
     const blogPostsContainer = document.getElementById('blog-posts-container');
-    if (!blogPostsContainer) return;
+    const submitBlogForm = document.getElementById('submit-blog-form');
 
-    blogPostsContainer.innerHTML = 'Loading posts...';
-    let postsHTML = '';
-    const q = query(collection(db, "blogs"), orderBy("timestamp", "desc"));
-    const querySnapshot = await getDocs(q);
+    async function displayApprovedBlogs() {
+        if (!blogPostsContainer) return;
+        blogPostsContainer.innerHTML = 'Loading posts...';
+        let postsHTML = '';
+        const q = query(collection(db, "blogs"), where("status", "==", "approved"), orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
 
-    if (querySnapshot.empty) {
-        blogPostsContainer.innerHTML = '<p>No blog posts yet.</p>';
-        return;
+        if (querySnapshot.empty) {
+            blogPostsContainer.innerHTML = '<p>No blog posts have been published yet.</p>';
+        } else {
+            querySnapshot.forEach((doc) => {
+                const post = doc.data();
+                postsHTML += `
+                    <div class="blog-post">
+                        <h2>${post.title}</h2>
+                        <div class="blog-meta">Posted by ${post.author}</div>
+                        <p>${post.content.replace(/\n/g, '<br>')}</p>
+                    </div>`;
+            });
+            blogPostsContainer.innerHTML = postsHTML;
+        }
     }
-    querySnapshot.forEach((doc) => {
-        const post = doc.data();
-        postsHTML += `<div class="blog-post" style="padding: 1rem; border-bottom: 1px solid #eee;"><h2>${post.title}</h2><p>${post.content.replace(/\n/g, '<br>')}</p></div>`;
-    });
-    blogPostsContainer.innerHTML = postsHTML;
+
+    if (submitBlogForm) {
+        submitBlogForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                await addDoc(collection(db, "blogs"), {
+                    author: document.getElementById('authorName').value,
+                    title: document.getElementById('blogTitle').value,
+                    content: document.getElementById('blogContent').value,
+                    status: "pending",
+                    timestamp: new Date()
+                });
+                showToast('Thank you! Your blog post has been submitted for review.', 'success');
+                submitBlogForm.reset();
+            } catch (error) {
+                showToast('Error submitting post.', 'error');
+            }
+        });
+    }
+
+    displayApprovedBlogs();
 }
 
 // =================================================================
-//  Admin Panel Logic (admin.html)
+//  Index Page Logic
+// =================================================================
+async function handleIndexPage() {
+    const latestBlogContainer = document.getElementById('latest-blog-container');
+    if (!latestBlogContainer) return;
+
+    latestBlogContainer.innerHTML = 'Loading latest post...';
+    const q = query(collection(db, "blogs"), where("status", "==", "approved"), orderBy("timestamp", "desc"), limit(1));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        latestBlogContainer.innerHTML = '<p>Check back later for our latest news and tips!</p>';
+    } else {
+        const post = querySnapshot.docs[0].data();
+        latestBlogContainer.innerHTML = `
+            <h3>${post.title}</h3>
+            <p>${post.content.substring(0, 150)}...</p>
+            <a href="blogs.html" class="read-more">Read More</a>
+        `;
+    }
+}
+
+// =================================================================
+//  Admin Panel Logic (admin.html) - UPDATED
 // =================================================================
 function handleAdminPage() {
     const addBlogForm = document.getElementById('add-blog-form');
+    const blogsList = document.getElementById('blogs-list');
     const enquiriesList = document.getElementById('enquiries-list');
     const reviewsList = document.getElementById('reviews-list');
-    const blogsList = document.getElementById('blogs-list');
+    const contactListContainer = document.getElementById('contact-list-container');
     const blogCountEl = document.getElementById('blog-count');
     const enquiryCountEl = document.getElementById('enquiry-count');
     const reviewCountEl = document.getElementById('review-count');
+    const contactCountEl = document.getElementById('contact-count');
 
-    // --- Function to add a new blog post ---
+    // --- Add new blog post (from admin) ---
     if (addBlogForm) {
         addBlogForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
                 await addDoc(collection(db, "blogs"), {
+                    author: "Admin",
                     title: addBlogForm.title.value,
                     content: addBlogForm.content.value,
+                    status: "approved",
                     timestamp: new Date()
                 });
-                alert('Blog post added!');
+                showToast('Blog post added and published!', 'success');
                 addBlogForm.reset();
                 displayAdminBlogs();
                 updateStats();
             } catch (error) {
-                alert('Error adding blog post.');
+                showToast('Error adding blog post.', 'error');
             }
         });
     }
 
-    // --- Function to display all enquiries with delete button ---
-    async function displayEnquiries() {
-        if (!enquiriesList) return;
-        enquiriesList.innerHTML = 'Loading enquiries...';
-        let enquiriesHTML = '';
-        const q = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
-        const querySnapshot = await getDocs(q);
-
-        querySnapshot.forEach((doc) => {
-            const enquiry = doc.data();
-            const docId = doc.id;
-            enquiriesHTML += `
-                <div class="list-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
-                    <p><strong>Tracking ID:</strong> ${enquiry.trackingId}</p>
-                    <p><strong>Name:</strong> ${enquiry.name || enquiry.fullName}</p>
-                    <p><strong>Current Status:</strong> ${enquiry.status}</p>
-                    <div class="update-form-container" style="margin-top: 10px;">
-                        <input type="text" id="status-input-${docId}" placeholder="Enter new status">
-                        <button class="update-status-btn" data-id="${docId}">Update Status</button>
-                        <button class="delete-btn" data-collection="enquiries" data-id="${docId}">Delete</button>
-                    </div>
-                </div>
-            `;
-        });
-        enquiriesList.innerHTML = enquiriesHTML || '<p>No enquiries received yet.</p>';
-    }
-
-    // --- Function to display all reviews with delete button ---
-    async function displayAdminReviews() {
-        if (!reviewsList) return;
-        reviewsList.innerHTML = 'Loading reviews...';
-        let reviewsHTML = '';
-        const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
-        const querySnapshot = await getDocs(q);
-
-        querySnapshot.forEach((doc) => {
-            const review = doc.data();
-            const docId = doc.id;
-            reviewsHTML += `
-                <div class="list-item" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-                    <p><strong>${review.name}:</strong> "${review.review}"</p>
-                    <button class="delete-btn" data-collection="reviews" data-id="${docId}">Delete</button>
-                </div>`;
-        });
-        reviewsList.innerHTML = reviewsHTML || '<p>No reviews submitted yet.</p>';
-    }
-    
-    // --- Function to display all blogs with delete button ---
+    // --- Display all blogs with status and approve/delete buttons ---
     async function displayAdminBlogs() {
         if (!blogsList) return;
         blogsList.innerHTML = 'Loading blogs...';
@@ -286,12 +291,99 @@ function handleAdminPage() {
             const blog = doc.data();
             const docId = doc.id;
             blogsHTML += `
-                <div class="list-item" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+                <div class="list-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
                     <p><strong>Title:</strong> ${blog.title}</p>
-                    <button class="delete-btn" data-collection="blogs" data-id="${docId}">Delete</button>
+                    <p><strong>Author:</strong> ${blog.author}</p>
+                    <p><strong>Status:</strong> <span style="font-weight: bold; color: ${blog.status === 'approved' ? 'green' : 'orange'};">${blog.status}</span></p>
+                    <div>
+                        ${blog.status === 'pending' ? `<button class="approve-btn" data-id="${docId}">Approve</button>` : ''}
+                        <button class="delete-btn" data-collection="blogs" data-id="${docId}">Delete</button>
+                    </div>
                 </div>`;
         });
-        blogsList.innerHTML = blogsHTML || '<p>No blogs posted yet.</p>';
+        blogsList.innerHTML = blogsHTML || '<p>No blogs submitted yet.</p>';
+    }
+
+    // --- Display all QUOTE enquiries with full details ---
+    async function displayEnquiries() {
+        if (!enquiriesList) return;
+        enquiriesList.innerHTML = 'Loading enquiries...';
+        let enquiriesHTML = '';
+        const q = query(collection(db, "enquiries"), orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+            const enquiry = doc.data();
+            const docId = doc.id;
+            // Build the detailed view for each enquiry
+            enquiriesHTML += `
+                <div class="list-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
+                    <p><strong>Tracking ID:</strong> ${enquiry.trackingId}</p>
+                    <p><strong>Name:</strong> ${enquiry.name}</p>
+                    <p><strong>Email:</strong> ${enquiry.email}</p>
+                    <p><strong>Phone:</strong> ${enquiry.phone}</p>
+                    <p><strong>Moving From:</strong> ${enquiry.movingFrom}</p>
+                    <p><strong>Moving To:</strong> ${enquiry.movingTo}</p>
+                    <p><strong>Preferred Date:</strong> ${enquiry.movingDate}</p>
+                    <p><strong>Details:</strong> ${enquiry.details}</p>
+                    <hr>
+                    <p><strong>Current Status:</strong> ${enquiry.status}</p>
+                    <div class="update-form-container">
+                        <input type="text" id="status-input-${docId}" placeholder="Enter new status">
+                        <button class="update-status-btn" data-id="${docId}">Update Status</button>
+                        <button class="delete-btn" data-collection="enquiries" data-id="${docId}">Delete</button>
+                    </div>
+                </div>`;
+        });
+        enquiriesList.innerHTML = enquiriesHTML || '<p>No quote enquiries received yet.</p>';
+    }
+
+    // --- Display all REVIEWS ---
+    async function displayAdminReviews() {
+        if (!reviewsList) return;
+        reviewsList.innerHTML = 'Loading reviews...';
+        let reviewsHTML = '';
+        const q = query(collection(db, "reviews"), orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            reviewsList.innerHTML = '<p>No reviews submitted yet.</p>';
+            return;
+        }
+
+        querySnapshot.forEach((doc) => {
+            const review = doc.data();
+            const docId = doc.id;
+            reviewsHTML += `
+                <div class="list-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
+                    <p><strong>${review.name}:</strong> "${review.review}"</p>
+                    <button class="delete-btn" data-collection="reviews" data-id="${docId}">Delete</button>
+                </div>`;
+        });
+        reviewsList.innerHTML = reviewsHTML;
+    }
+
+    // --- Display all CONTACT MESSAGES ---
+    async function displayContactList() {
+        if (!contactListContainer) return;
+        contactListContainer.innerHTML = 'Loading messages...';
+        let contactsHTML = '';
+        const q = query(collection(db, "contact-list"), orderBy("timestamp", "desc"));
+        const querySnapshot = await getDocs(q);
+
+        querySnapshot.forEach((doc) => {
+            const contact = doc.data();
+            const docId = doc.id;
+            contactsHTML += `
+                <div class="list-item" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px;">
+                    <p><strong>Name:</strong> ${contact.name}</p>
+                    <p><strong>Email:</strong> ${contact.email}</p>
+                    <p><strong>Phone:</strong> ${contact.phone}</p>
+                    <p><strong>Message:</strong> ${contact.message}</p>
+                    <button class="delete-btn" data-collection="contact-list" data-id="${docId}">Delete</button>
+                </div>`;
+        });
+        contactListContainer.innerHTML = contactsHTML || '<p>No contact messages received yet.</p>';
     }
 
     // --- Function to update the stat cards ---
@@ -300,47 +392,51 @@ function handleAdminPage() {
             const blogsSnapshot = await getDocs(collection(db, "blogs"));
             const enquiriesSnapshot = await getDocs(collection(db, "enquiries"));
             const reviewsSnapshot = await getDocs(collection(db, "reviews"));
+            const contactsSnapshot = await getDocs(collection(db, "contact-list"));
 
             if (blogCountEl) blogCountEl.textContent = blogsSnapshot.size;
             if (enquiryCountEl) enquiryCountEl.textContent = enquiriesSnapshot.size;
             if (reviewCountEl) reviewCountEl.textContent = reviewsSnapshot.size;
+            if (contactCountEl) contactCountEl.textContent = contactsSnapshot.size;
         } catch (error) {
             console.error("Error updating stats: ", error);
         }
     }
 
-    // --- Main event listener for all delete and update buttons ---
+    // --- Main event listener for all admin buttons ---
     document.querySelector('.admin-main').addEventListener('click', async (e) => {
-        // Handle status updates
         if (e.target.classList.contains('update-status-btn')) {
             const docId = e.target.dataset.id;
             const newStatus = document.getElementById(`status-input-${docId}`).value;
             if (newStatus && docId) {
                 await updateDoc(doc(db, "enquiries", docId), { status: newStatus });
-                alert('Status updated!');
-                displayEnquiries(); // Refresh list
+                showToast('Status updated!', 'success');
+                displayEnquiries();
+            }
+        }
+        
+        if (e.target.classList.contains('approve-btn')) {
+            const docId = e.target.dataset.id;
+            if (docId) {
+                await updateDoc(doc(db, "blogs", docId), { status: "approved" });
+                showToast('Blog post approved and published!', 'success');
+                displayAdminBlogs();
             }
         }
 
-        // Handle deletions
         if (e.target.classList.contains('delete-btn')) {
             const docId = e.target.dataset.id;
             const collectionName = e.target.dataset.collection;
-            // The confirm() dialog is removed to prevent issues.
-            // To re-enable it, wrap the below code in: if (confirm('Are you sure?')) { ... }
             try {
                 await deleteDoc(doc(db, collectionName, docId));
-                alert('Item deleted successfully!');
-                
-                // Refresh the correct list and update stats
+                showToast('Item deleted successfully!', 'success');
                 if (collectionName === 'enquiries') displayEnquiries();
                 if (collectionName === 'reviews') displayAdminReviews();
                 if (collectionName === 'blogs') displayAdminBlogs();
+                if (collectionName === 'contact-list') displayContactList();
                 updateStats();
-
             } catch (error) {
-                console.error("Error deleting document: ", error);
-                alert('Error: Could not delete item.');
+                showToast('Error: Could not delete item.', 'error');
             }
         }
     });
@@ -349,5 +445,18 @@ function handleAdminPage() {
     displayEnquiries();
     displayAdminReviews();
     displayAdminBlogs();
+    displayContactList();
     updateStats();
+}
+
+// --- Toast Notification Function ---
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast-notification');
+    toast.textContent = message;
+    toast.className = 'toast-notification show ' + type; // Add 'show' and type class
+
+    // Hide the toast after 3 seconds
+    setTimeout(() => {
+        toast.className = 'toast-notification'; // Remove 'show' class to hide
+    }, 3000);
 }

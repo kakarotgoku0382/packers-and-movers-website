@@ -63,7 +63,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url('Screenshot\ 2025-07-28\ 205813.png') no-repeat center center/cover;
+  background: url('/images/hero-bg.png') no-repeat center center/cover;
   position: relative;
   color: white;
   text-align: center;
@@ -540,118 +540,171 @@ body {
 
 /* Admin Panel Styles */
 .admin-header {
-    background-color: #00416A; /* Dark blue background */
-    color: white;
-    padding: 20px;
+    background-color: #0a3d62;
+    padding: 1.5rem 0;
     text-align: center;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.admin-header-content {
-    max-width: 1200px; /* Center the header content */
-    margin: 0 auto;
+.admin-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
 }
 
+/* === Main Layout === */
 .admin-main {
-    padding: 20px;
-    max-width: 1200px; /* Set a max width for the main content */
-    margin: 0 auto; /* Center the main content */
+    padding: 2rem;
+    max-width: 1100px;
+    margin: auto;
 }
 
-.wide-layout {
-    width: 100%; /* Full width for the wide layout */
-}
-
+/* === Stats Section === */
 .admin-quick-stats {
     display: flex;
+    gap: 1rem;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 2rem;
 }
 
 .stat-card {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    flex: 1; /* Allow cards to grow equally */
-    margin: 0 10px; /* Space between cards */
+    flex: 1;
+    background-color: white;
+    border-radius: 12px;
+    padding: 1.5rem;
     text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
 .stat-value {
     font-size: 2rem;
-    font-weight: bold;
-    color: #00416A; /* Dark blue color for values */
+    font-weight: 700;
+    color: #0a3d62;
 }
 
 .stat-label {
+    margin-top: 0.5rem;
     font-size: 1rem;
-    color: #555; /* Grey color for labels */
+    color: #555;
 }
 
+/* === Sections === */
 .admin-section {
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
 }
 
 .admin-section h2 {
-    color: #00416A; /* Dark blue color for section headings */
-    margin-bottom: 15px;
+    font-size: 1.5rem;
+    color: #0a3d62;
+    margin-bottom: 1rem;
 }
 
-#add-blog-form,
-#add-service-form {
+/* === Forms === */
+.admin-section form {
     display: flex;
     flex-direction: column;
+    gap: 0.75rem;
 }
 
-#add-blog-form input,
-#add-service-form input,
-#add-blog-form textarea,
-#add-service-form textarea {
-    padding: 10px;
-    margin-bottom: 10px;
+.admin-section input,
+.admin-section textarea {
+    padding: 0.8rem;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: 0.3s ease;
 }
 
-#add-blog-form button,
-#add-service-form button {
-    background-color: #00416A; /* Dark blue button */
-    color: white;
-    padding: 10px;
+.admin-section input:focus,
+.admin-section textarea:focus {
+    outline: none;
+    border-color: #0a3d62;
+    box-shadow: 0 0 0 2px rgba(10, 61, 98, 0.2);
+}
+
+.admin-section button {
+    padding: 0.8rem 1.5rem;
+    background-color: #f1c40f;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #0a3d62;
     cursor: pointer;
-    font-size: 16px;
+    transition: background 0.3s ease;
 }
 
-#add-blog-form button:hover,
-#add-service-form button:hover {
-    background-color: #003057; /* Darker blue on hover */
+.admin-section button:hover {
+    background-color: #e1b70d;
 }
 
+/* === Dynamic Lists === */
+#blogs-list,
 #enquiries-list,
-#reviews-list,
-#team-list,
-#services-list {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    max-height: 300px;
-    overflow-y: auto; /* Scrollable if content exceeds height */
+#reviews-list {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
+/* === Enquiry / Review Card === */
+.enquiry-card,
+.review-card {
+    padding: 1rem;
+    background-color: #fdfdfd;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+/* === Delete / Update Buttons in Lists === */
+.enquiry-card button,
+.review-card button {
+    margin-top: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.enquiry-card .update-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    margin-right: 0.5rem;
+}
+
+.enquiry-card .delete-btn,
+.review-card .delete-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+}
+
+/* === Footer === */
 .admin-footer {
     text-align: center;
-    padding: 10px;
-    background-color: #f1f1f1;
-    position: relative;
-    bottom: 0;
-    width: 100%;
+    padding: 1rem;
+    background-color: #0a3d62;
+    color: white;
+    font-size: 0.9rem;
+    border-top: 2px solid #f1c40f;
+}
+
+/* Scrollable container for Customer Enquiries */
+#enquiries-list,
+#blogs-list,
+#reviews-list,
+#contact-list-container {
+    max-height: 400px;  /* Adjust height as needed */
+    overflow-y: auto;
+    padding-right: 8px;
+    scroll-behavior: smooth;
 }
 
 /* Services Styles */
@@ -662,29 +715,32 @@ body {
 
 /* --- NEW STYLES FOR ADMIN BUTTONS --- */
 .update-status-btn, .delete-btn {
-    padding: 8px 12px;
+    padding: 0.8rem 1.5rem;
+    background-color: #f1c40f;
     border: none;
-    border-radius: 5px;
-    color: white;
+    border-radius: 8px;
+    color: #0a3d62;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 600;
     margin-left: 10px;
+    transition: background 0.3s ease;
 }
 
 .update-status-btn {
-    background-color: #28a745; /* Green */
+    background-color: #f1c40f; 
 }
 
 .update-status-btn:hover {
-    background-color: #218838;
+    background-color: #e1b70d;
 }
 
 .delete-btn {
-    background-color: #dc3545; /* Red */
+    background-color: #f1c40f; 
 }
 
 .delete-btn:hover {
-    background-color: #c82333;
+    background-color: #e1b70d;
 }
 
 /* blog css */
@@ -692,10 +748,9 @@ body {
 line-height: 1.6;
 }
 
-
 /* Header */
 .blog-header {
-background: url("stardust.jpeg") no-repeat center center/cover;
+background: url("/images/blog-bg.jpeg") no-repeat center center/cover;
 padding: 6rem 2rem;
 text-align: center;
 color: white;
@@ -813,4 +868,68 @@ color: white;
 text-align: center;
 padding: 2rem;
 margin-top: 3rem;
+}
+
+/* --- NEW STYLES FOR BLOG POSTS --- */
+
+/* Style for the 'Posted by...' text */
+.blog-meta {
+  font-size: 0.85rem; /* Makes the font smaller */
+  font-style: italic;
+  color: #00416A; /* Highlights the text with a dark blue color */
+  background-color: #eef2f7; /* Adds a very light blue background highlight */
+  display: inline-block; /* Allows the background to wrap tightly */
+  padding: 4px 10px;
+  border-radius: 15px;
+  margin-bottom: 1rem; /* Adds some space below the author name */
+}
+
+/* Style for the main blog paragraph */
+.blog-post p {
+  font-size: 1.1rem; /* Makes the main text larger and more readable */
+  line-height: 1.7;  /* Increases the space between lines */
+}
+
+/* =================================================================
+   NEW TOAST NOTIFICATION STYLES
+================================================================= */
+
+.toast-notification {
+  position: fixed; /* Stays on screen */
+  bottom: 20px; /* Position at the bottom */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  z-index: 2000; /* Ensure it's on top of everything */
+  opacity: 0; /* Hidden by default */
+  visibility: hidden;
+  transition: opacity 0.4s ease, bottom 0.4s ease, visibility 0.4s;
+}
+
+/* Style for when the notification is visible */
+.toast-notification.show {
+  opacity: 1;
+  visibility: visible;
+  bottom: 40px; /* Animate upwards */
+}
+
+/* Style for a success message (green background) */
+.toast-notification.success {
+  background-color: #27ae60;
+}
+
+/* Style for an error message (red background) */
+.toast-notification.error {
+  background-color: #e74c3c;
+}
+
+#navbar-container {
+  position: sticky;
+  top: 0;
+  z-index: 1000;  
 }
