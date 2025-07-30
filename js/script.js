@@ -5,3 +5,4 @@
             document.getElementById('navbar-container').innerHTML = data;
         });
 }
+

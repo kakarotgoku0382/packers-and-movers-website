@@ -289,23 +289,6 @@ body {
   }
 }
 
-/* Base Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  scroll-behavior: smooth;
-  transition: all 0.4s ease-in-out;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to right, #e0eafc, #cfdef3);
-  color: #333;
-  overflow-x: hidden;
-  position: relative;
-}
-
 /* ... (existing CSS from index.css) ... */
 
 /* CSS extracted from about-us.html starts here */
@@ -564,6 +547,19 @@ body {
 @media (max-width: 768px) {
     .contact-details-grid {
         grid-template-columns: 1fr; /* Stack items on small screens */
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px; /* Space between fields */
+      padding: 20px; /* Padding around the form */
+    }
+
+    input, textarea {
+      width: 90%; /* Adjust as needed */
+      max-width: 400px; /* Limit max width */
+      box-sizing: border-box; /* Include padding in width calculations */
     }
 }
 
@@ -988,3 +984,5 @@ margin-top: 3rem;
   top: 0;
   z-index: 1000;  
 }
+
+
