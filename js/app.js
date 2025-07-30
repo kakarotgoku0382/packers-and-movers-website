@@ -42,7 +42,7 @@ async function submitEnquiry(enquiryData, formElement) {
     const dataToSave = { ...enquiryData, trackingId: trackingId, status: "Booking Confirmed", timestamp: new Date() };
     try {
         await addDoc(collection(db, "enquiries"), dataToSave);
-        showToast(`Success! Your quote request has been sent.\nYour Tracking ID is: ${trackingId}`, 'success');
+        showServicePopup(`Success! Your quote request has been sent.\nYour Tracking ID is: ${trackingId}`, 'success');
         formElement.reset();
     } catch (error) {
         console.error("Error sending enquiry: ", error);
@@ -460,3 +460,15 @@ function showToast(message, type = 'success') {
         toast.className = 'toast-notification'; // Remove 'show' class to hide
     }, 3000);
 }
+
+        // Services popup functionality
+    function showServicePopup(message) {
+        const popup = document.getElementById('service-popup');
+        document.getElementById('popup-message').textContent = message;
+        popup.style.display = 'block';
+    }
+
+    // Close popup handler
+    document.querySelector('.close-popup').addEventListener('click', function() {
+        document.getElementById('service-popup').style.display = 'none';
+    });
