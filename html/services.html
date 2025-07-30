@@ -63,7 +63,7 @@
         <form id="service-enquiry-form">
             <input type="text" id="fullName" placeholder="Full Name" required>
             <input type="email" id="email" placeholder="Email Address" required>
-            <input type="tel" id="phone" placeholder="Phone Number" required>
+            <input type="tel" placeholder="Enter 10 digit Phone Number" id="phone" required pattern="[0-9]{10}" maxlength="10">
             <input type="text" id="movingFrom" placeholder="Moving From (City, Address)" required>
             <input type="text" id="movingTo" placeholder="Moving To (City, Address)" required>
             <input type="date" id="movingDate" placeholder="Preferred Moving Date" required>

@@ -236,8 +236,8 @@ body {
 }
 
 .contact button {
-  background: #00416A;
-  color: white;
+  background: #ffc107;
+  color: #021C3B;
   padding: 1rem;
   border-radius: 8px;
   font-size: 1rem;
@@ -738,7 +738,8 @@ body {
 
 /* Services Styles */
 
-#service-enquiry-form{
+#service-enquiry-form,
+#contact-form{
   width: 60vh;
 }
 
