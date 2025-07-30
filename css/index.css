@@ -63,7 +63,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url('/images/hero-bg.png') no-repeat center center/cover;
+  background: url('../images/hero-bg.png') no-repeat center center/cover;
   position: relative;
   color: white;
   text-align: center;
@@ -805,7 +805,7 @@ line-height: 1.6;
 
 /* Header */
 .blog-header {
-background: url("/images/blog-bg.jpeg") no-repeat center center/cover;
+background: url("../images/blog-bg.jpeg") no-repeat center center/cover;
 padding: 6rem 2rem;
 text-align: center;
 color: white;
